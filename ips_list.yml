@@ -19,9 +19,9 @@
 #
 
 pulp_soc:
-  commit: v2.0.0
+  commit: cfi_base_2024
   server: https://github.com
-  group:  pulp-platform
+  group:  cficrypto
 
 tbtools:
   commit: v0.1
