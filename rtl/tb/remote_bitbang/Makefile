@@ -18,7 +18,7 @@
 CFLAGS          = -Wall -Wextra -Wno-missing-field-initializers \
 			-Wno-unused-function -Wno-missing-braces \
 			-O2 -g -march=native \
-			-DENABLE_LOGGING -DNDEBUG
+			-DENABLE_LOGGING -DNDEBUG -fcommon
 CFLAGS_DBG      =
 # we need gnu11 and no-strict-aliasing
 ALL_CFLAGS      = -std=gnu11 -fno-strict-aliasing $(CFLAGS)

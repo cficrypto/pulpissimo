@@ -129,4 +129,8 @@
 
 /* Interfaces have been moved to pulp_interfaces.sv. Sorry :) */
 
+// BACCTODO delete this
+// Parameter for CFI instruction width
+//`define CFI_INSTR_WIDTH = 40
+
 `endif
