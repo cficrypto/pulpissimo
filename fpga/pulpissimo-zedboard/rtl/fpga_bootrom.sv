@@ -32,5 +32,5 @@ module fpga_bootrom
    input logic [ADDR_WIDTH-1:0]  A,
    output logic [DATA_WIDTH-1:0] Q
    );
-  assign Q = 32'h0000006f; //jal x0,0
+  assign Q = 32'h0000006f; //jal x0,0 // BACCTODO this has to be encrypted (in the correct fpga file at least)
 endmodule : fpga_bootrom
