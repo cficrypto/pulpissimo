@@ -132,5 +132,6 @@
 // BACCTODO delete this
 // Parameter for CFI instruction width
 //`define CFI_INSTR_WIDTH = 40
+`include "cfi_config.sv" 
 
 `endif
