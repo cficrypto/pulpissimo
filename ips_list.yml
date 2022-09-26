@@ -25,7 +25,7 @@ pulp_soc:
   server: git@gitlab.ecs.tuwien.ac.at
 # group:  alwieser
   group:  riscv_cfi_crypto
-  commit: cfi
+  commit: a41c07a044a3e8366a6d841305375bc7679bb17e
 
 tbtools:
   commit: v0.1
