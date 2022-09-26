@@ -402,7 +402,14 @@ static void __attribute__((noreturn)) bootFromOther(int platform)
 
 void __attribute__((noreturn)) main()
 {
-
+  // __asm__ volatile ("addi x6,x0,0xff");
+  // __asm__ volatile ("csrrw x0, 0x7d0, x6");
+  
+  // asm volatile ("csrw 0x7d0, 0x0F");  
+  
+  // __asm__ volatile ("addi x6,x0,0xab");
+  // asm volatile ("csrw %0, x6"  :: "i" (0x7d0));
+  
   bootFromOther(APB_SOC_PLT_OTHER);
 
   while(1);
