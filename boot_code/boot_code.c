@@ -18,6 +18,7 @@
 #include "hal/pulp.h"
 #include "archi/pulp.h"
 #include <stddef.h>
+#include "cfi.h"
 
 #define BOOT_STACK_SIZE  1024
 #define MAX_NB_AREA 16
@@ -409,7 +410,23 @@ void __attribute__((noreturn)) main()
   
   // __asm__ volatile ("addi x6,x0,0xab");
   // asm volatile ("csrw %0, x6"  :: "i" (0x7d0));
-  
+
+  int tag = 0xaaaaabbb;
+  asm volatile ("csrw %0, %1"  :: "i" (CFI_TAG_BASE), "r" (tag));
+  tag = 0xcccccddd;
+  asm volatile ("csrw %0, %1"  :: "i" (CFI_TAG_BASE + 1), "r" (tag));
+  tag = 0xeeeeefff;
+  asm volatile ("csrw %0, %1"  :: "i" (CFI_TAG_BASE + 2), "r" (tag));
+  tag = 0x90abcdef;
+  asm volatile ("csrw %0, %1"  :: "i" (CFI_TAG_BASE + 3), "r" (tag));
+  tag = 0x12345678;
+  asm volatile ("csrw %0, %1"  :: "i" (CFI_TAG_BASE + 4), "r" (tag));
+
+  asm volatile ("csrw %0, %1"  :: "i" (CFI_CFG_BASE), "i" (CFI_CFG_ON));
+  __asm__ volatile ("nop");
+  __asm__ volatile ("nop");
+  asm volatile ("csrw %0, %1"  :: "i" (CFI_CFG_BASE), "i" (CFI_CFG_OFF));
+
   bootFromOther(APB_SOC_PLT_OTHER);
 
   while(1);
