@@ -422,10 +422,18 @@ void __attribute__((noreturn)) main()
   tag = 0x12345678;
   asm volatile ("csrw %0, %1"  :: "i" (CFI_TAG_BASE + 4), "r" (tag));
 
+  asm volatile ("csrw %0, %1"  :: "i" (CFI_CFG_BASE), "i" (CFI_CFG_ON | CFI_CFG_LOAD_STATE));
+  __asm__ volatile ("nop");
   asm volatile ("csrw %0, %1"  :: "i" (CFI_CFG_BASE), "i" (CFI_CFG_ON));
   __asm__ volatile ("nop");
   __asm__ volatile ("nop");
+  asm volatile("addi x6,x0,0xab");
+  __asm__ volatile ("nop");
+  __asm__ volatile ("nop");
   asm volatile ("csrw %0, %1"  :: "i" (CFI_CFG_BASE), "i" (CFI_CFG_OFF));
+  __asm__ volatile ("nop");
+  __asm__ volatile ("nop");
+  __asm__ volatile ("nop");
 
   bootFromOther(APB_SOC_PLT_OTHER);
 
