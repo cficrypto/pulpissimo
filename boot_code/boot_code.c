@@ -411,23 +411,32 @@ void __attribute__((noreturn)) main()
   // __asm__ volatile ("addi x6,x0,0xab");
   // asm volatile ("csrw %0, x6"  :: "i" (0x7d0));
 
-  int tag = 0xaaaaabbb;
-  asm volatile ("csrw %0, %1"  :: "i" (CFI_TAG_BASE), "r" (tag));
-  tag = 0xcccccddd;
-  asm volatile ("csrw %0, %1"  :: "i" (CFI_TAG_BASE + 1), "r" (tag));
-  tag = 0xeeeeefff;
-  asm volatile ("csrw %0, %1"  :: "i" (CFI_TAG_BASE + 2), "r" (tag));
-  tag = 0x90abcdef;
-  asm volatile ("csrw %0, %1"  :: "i" (CFI_TAG_BASE + 3), "r" (tag));
-  tag = 0x12345678;
-  asm volatile ("csrw %0, %1"  :: "i" (CFI_TAG_BASE + 4), "r" (tag));
 
-  asm volatile ("csrw %0, %1"  :: "i" (CFI_CFG_BASE), "i" (CFI_CFG_ON | CFI_CFG_LOAD_STATE));
+// DON'T CHANGE LINES BELOW
+// AUTOGENERATE BEGIN
+
+  // asm volatile(".word 0xff000013");
+  int tag0 = 0x5103ebb5;
+  asm volatile ("csrw %0, %1"  :: "i" (CFI_TAG_BASE + 0), "r" (tag0));
+  int tag1 = 0xb56f9679;
+  asm volatile ("csrw %0, %1"  :: "i" (CFI_TAG_BASE + 1), "r" (tag1));
+  int tag2 = 0x91bf8e12;
+  asm volatile ("csrw %0, %1"  :: "i" (CFI_TAG_BASE + 2), "r" (tag2));
+  int tag3 = 0x1ac163f3;
+  asm volatile ("csrw %0, %1"  :: "i" (CFI_TAG_BASE + 3), "r" (tag3));
+  int tag4 = 0x2f952d8d;
+  asm volatile ("csrw %0, %1"  :: "i" (CFI_TAG_BASE + 4), "r" (tag4));
+  // asm volatile(".word 0xff000013");
+
+// AUTOGENERATE END 
+// DONT CHANGE LINES ABOVE
+
+  asm volatile ("csrw %0, %1"  :: "i" (CFI_CFG_BASE), "i" (CFI_CFG_LOAD_STATE));
   __asm__ volatile ("nop");
   asm volatile ("csrw %0, %1"  :: "i" (CFI_CFG_BASE), "i" (CFI_CFG_ON));
   __asm__ volatile ("nop");
   __asm__ volatile ("nop");
-  asm volatile("addi x6,x0,0xab");
+  asm volatile(".word 0xff000013"); // for replacement only
   __asm__ volatile ("nop");
   __asm__ volatile ("nop");
   asm volatile ("csrw %0, %1"  :: "i" (CFI_CFG_BASE), "i" (CFI_CFG_OFF));

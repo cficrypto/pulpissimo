@@ -1,7 +1,8 @@
-# add cfi signals
+  onerror {resume}
+
 set rvcores [find instances -recursive -bydu riscv_core -nodu]
 
-if {$rvcores ne ""} {
+# if {$rvcores ne ""} {
   add wave -group "CFI" $rvcores/clk_i
   add wave -group "CFI" $rvcores/cs_registers_i/CFI_CFG_o
   add wave -group "CFI" $rvcores/cs_registers_i/CFI_tag_o
@@ -20,4 +21,6 @@ if {$rvcores ne ""} {
   add wave -group "CFI" $rvcores/if_stage_i/riscv_decrypt_i/fsm_state
   add wave -group "CFI" $rvcores/if_stage_i/riscv_decrypt_i/fsm_state_n
   add wave -group "CFI" $rvcores/if_stage_i/riscv_decrypt_i/decrypt_out
-}
+  add wave -group "CFI" $rvcores/if_stage_i/riscv_decrypt_i/decrypter/decrypt_inst/fsm_state
+  add wave -group "CFI" $rvcores/if_stage_i/riscv_decrypt_i/decrypter/decrypt_inst/state
+# }
