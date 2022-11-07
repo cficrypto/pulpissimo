@@ -60,6 +60,9 @@ boot_code.cde: $(BOOTCODE)
 	$(OBJCOPY) --srec-len 1 --output-target=srec $(BOOTCODE) $(BOOTCODE).s19
 	./s19toboot.py $(BOOTCODE).s19 boot_code.cde pulpissimo
 
+boot_code.o: boot_code.c write_tag.h
+	 $(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c -o $@ $<
+
 .PHONY: clean
 clean:
 	$(RM) $(BOOTCODE) $(BOOTCODE).o crt0.o \

@@ -401,6 +401,10 @@ static void __attribute__((noreturn)) bootFromOther(int platform)
   while(1);
 }
 
+void write_tag(){
+  #include "write_tag.h"
+}
+
 void __attribute__((noreturn)) main()
 {
   // __asm__ volatile ("addi x6,x0,0xff");
@@ -412,24 +416,7 @@ void __attribute__((noreturn)) main()
   // asm volatile ("csrw %0, x6"  :: "i" (0x7d0));
 
 
-// DON'T CHANGE LINES BELOW
-// AUTOGENERATE BEGIN
-
-  // asm volatile(".word 0xff000013");
-  int tag0 = 0x5103ebb5;
-  asm volatile ("csrw %0, %1"  :: "i" (CFI_TAG_BASE + 0), "r" (tag0));
-  int tag1 = 0xb56f9679;
-  asm volatile ("csrw %0, %1"  :: "i" (CFI_TAG_BASE + 1), "r" (tag1));
-  int tag2 = 0x91bf8e12;
-  asm volatile ("csrw %0, %1"  :: "i" (CFI_TAG_BASE + 2), "r" (tag2));
-  int tag3 = 0x1ac163f3;
-  asm volatile ("csrw %0, %1"  :: "i" (CFI_TAG_BASE + 3), "r" (tag3));
-  int tag4 = 0x2f952d8d;
-  asm volatile ("csrw %0, %1"  :: "i" (CFI_TAG_BASE + 4), "r" (tag4));
-  // asm volatile(".word 0xff000013");
-
-// AUTOGENERATE END 
-// DONT CHANGE LINES ABOVE
+  write_tag();
 
   asm volatile ("csrw %0, %1"  :: "i" (CFI_CFG_BASE), "i" (CFI_CFG_LOAD_STATE));
   __asm__ volatile ("nop");
