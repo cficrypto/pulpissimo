@@ -26,6 +26,7 @@ pulp_soc:
 # group:  alwieser
   group:  riscv_cfi_crypto
   commit: 0daebc1bcf3d39c3d2dab3f7fd8d261ff39f4385
+  access_token: glpat-spzQ4xLxTAutiELem5CR
 
 tbtools:
   commit: v0.1
