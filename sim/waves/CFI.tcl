@@ -23,4 +23,6 @@ set rvcores [find instances -recursive -bydu riscv_core -nodu]
   add wave -group "CFI" $rvcores/if_stage_i/riscv_decrypt_i/decrypt_out
   add wave -group "CFI" $rvcores/if_stage_i/riscv_decrypt_i/decrypter/decrypt_inst/fsm_state
   add wave -group "CFI" $rvcores/if_stage_i/riscv_decrypt_i/decrypter/decrypt_inst/state
+  add wave -group "CFI" $rvcores/if_stage_i/riscv_decrypt_i/decrypter/riscv_decrypt_inst/fsm_state
+  add wave -group "CFI" $rvcores/if_stage_i/riscv_decrypt_i/decrypter/riscv_decrypt_inst/inv_perm_state
 # }

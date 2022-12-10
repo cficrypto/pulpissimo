@@ -418,11 +418,12 @@ void __attribute__((noreturn)) main()
 
   write_tag();
 
-  asm volatile ("csrw %0, %1"  :: "i" (CFI_CFG_BASE), "i" (CFI_CFG_LOAD_STATE));
-  __asm__ volatile ("nop");
+  asm volatile ("csrw %0, %1"  :: "i" (CFI_CFG_BASE), "i" (CFI_CFG_ON | CFI_CFG_LOAD_STATE_BUSY));
   asm volatile ("csrw %0, %1"  :: "i" (CFI_CFG_BASE), "i" (CFI_CFG_ON));
   __asm__ volatile ("nop");
-  __asm__ volatile ("nop");
+  // asm volatile ("csrw %0, %1"  :: "i" (CFI_CFG_BASE), "i" (CFI_CFG_ON));
+  // __asm__ volatile ("nop");
+  // __asm__ volatile ("nop");
   asm volatile(".word 0xff000013"); // for replacement only
   __asm__ volatile ("nop");
   __asm__ volatile ("nop");
