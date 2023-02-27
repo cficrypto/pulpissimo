@@ -24,6 +24,9 @@
 `define EXIT_ERROR   -1
 //`define USE_DPI      1
 
+// BACCTODO // FIXME This include is not found -> hardcoded constant
+//`include "cfi_config.sv"
+ `define CFI_INSTR_WIDTH_DEF 40
 
 module tb_pulp;
 
@@ -770,8 +773,9 @@ module tb_pulp;
                      debug_mode_if.load_L2(num_stim, stimuli, s_tck, s_tms, s_trstn, s_tdi, s_tdo);
                   end
                end else if (LOAD_L2 == "FAST_DEBUG_PRELOAD") begin
+                  // XXX only fast preload_l2_single is modified to support a single word per stimuli entry
                   $warning("[TB] - Preloading the memory via direct simulator access. \nNEVER EVER USE THIS MODE TO VERIFY THE BOOT BEHAVIOR OF A CHIP. THIS BOOTMODE IS IMPOSSIBLE ON A PHYSICAL CHIP!!!");
-                  preload_l2(num_stim, stimuli);
+                  preload_l2_single(num_stim, stimuli);
                end else begin
                   $error("Unknown L2 loading mechnism chosen (LOAD_L2 == %s)", LOAD_L2);
                end
@@ -897,44 +901,82 @@ module tb_pulp;
       end
 
 
-  task automatic preload_l2(
+   task automatic preload_l2(
+         input int        num_stim,
+         ref logic [95:0] stimuli [100000:0]
+      );
+   static logic [7:0]             filler;
+   logic                          more_stim;
+   static logic [95:0]            stim_entry;
+      more_stim = 1'b1;
+      filler = 8'h11;
+      $info("Preloading L2 with stimuli through direct access.");
+      while (more_stim == 1'b1) begin
+         @(posedge i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.clk_i);
+         stim_entry = stimuli[num_stim];
+         // BACCTODO the fast preload ram loading happens here
+         force i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.req = 1'b1;
+         force i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.add = stim_entry[95:64];
+         force i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.wdata = {filler, stim_entry[31:0]};
+         force i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.wen = 1'b0;
+         force i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.be  = '1;
+         do begin
+            @(posedge i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.clk_i);
+         end while (~i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.gnt);
+         force i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.add   = stim_entry[95:64]+4;
+         force i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.wdata = {filler, stim_entry[63:32]};
+         do begin
+            @(posedge i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.clk_i);
+         end while (~i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.gnt);
+
+         num_stim = num_stim + 1;
+         if (num_stim > $size(stimuli) || stimuli[num_stim]===96'bx ) begin // make sure we have more stimuli
+            more_stim = 0;                    // if not set variable to 0, will prevent additional stimuli to be applied
+            break;
+         end
+      end // while (more_stim == 1'b1)
+      release i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.req;
+      release i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.add;
+      release i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.wdata;
+      release i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.wen;
+      release i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.be;
+      @(posedge i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.clk_i);
+   endtask
+
+   task automatic preload_l2_single(
                   input int        num_stim,
                   ref logic [95:0] stimuli [100000:0]
                   );
-    logic                          more_stim;
-    static logic [95:0]            stim_entry;
-     more_stim = 1'b1;
-     $info("Preloading L2 with stimuli through direct access.");
-     while (more_stim == 1'b1) begin
-        @(posedge i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.clk_i);
-        stim_entry = stimuli[num_stim];
-        force i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.req = 1'b1;
-        force i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.add = stim_entry[95:64];
-        force i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.wdata = stim_entry[31:0];
-        force i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.wen = 1'b0;
-        force i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.be  = '1;
-        do begin
-           @(posedge i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.clk_i);
-        end while (~i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.gnt);
-        force i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.add   = stim_entry[95:64]+4;
-        force i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.wdata = stim_entry[63:32];
-        do begin
-           @(posedge i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.clk_i);
-        end while (~i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.gnt);
+   logic                          more_stim;
+   static logic [95:0]            stim_entry;
+      more_stim = 1'b1;
+      $info("Preloading L2 with stimuli through direct access.");
+      while (more_stim == 1'b1) begin
+         @(posedge i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.clk_i);
+         stim_entry = stimuli[num_stim];
+         // BACCTODO the fast preload ram loading happens here
+         force i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.req = 1'b1;
+         force i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.add = stim_entry[95:64];
+         force i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.wdata = stim_entry[`CFI_INSTR_WIDTH_DEF:0];
+         force i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.wen = 1'b0;
+         force i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.be  = '1;
+         do begin
+            @(posedge i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.clk_i);
+         end while (~i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.gnt);
 
-        num_stim = num_stim + 1;
-        if (num_stim > $size(stimuli) || stimuli[num_stim]===96'bx ) begin // make sure we have more stimuli
-           more_stim = 0;                    // if not set variable to 0, will prevent additional stimuli to be applied
-           break;
-        end
-     end // while (more_stim == 1'b1)
-     release i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.req;
-     release i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.add;
-     release i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.wdata;
-     release i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.wen;
-     release i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.be;
-     @(posedge i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.clk_i);
-endtask
+         num_stim = num_stim + 1;
+         if (num_stim > $size(stimuli) || stimuli[num_stim]===96'bx ) begin // make sure we have more stimuli
+            more_stim = 0;                    // if not set variable to 0, will prevent additional stimuli to be applied
+            break;
+         end
+      end // while (more_stim == 1'b1)
+      release i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.req;
+      release i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.add;
+      release i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.wdata;
+      release i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.wen;
+      release i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.tcdm_debug.be;
+      @(posedge i_dut.soc_domain_i.pulp_soc_i.i_soc_interconnect_wrap.clk_i);
+   endtask
 
 
 endmodule // tb_pulp

@@ -29,3 +29,6 @@ sim/ncompile/rtl/vip.mk
 sim/ncompile/src_ips_files.f
 sim/ncompile/src_rtl_files.f
 sim/transcript
+boot_code/write_tag.h
+boot_code/write_tag_auto.h
+sim/boot/boot_code.cde

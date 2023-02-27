@@ -425,9 +425,9 @@ void __attribute__((noreturn)) main()
   // __asm__ volatile ("nop");
   // __asm__ volatile ("nop");
   asm volatile(".word 0xff000013"); // for replacement only
-  __asm__ volatile ("nop");
-  __asm__ volatile ("nop");
-  asm volatile ("csrw %0, %1"  :: "i" (CFI_CFG_BASE), "i" (CFI_CFG_OFF));
+
+  // asm volatile ("csrw %0, %1"  :: "i" (CFI_CFG_BASE), "i" (CFI_CFG_OFF));
+  asm volatile(".word 0x01000013"); // first unencrypted instruction (to differentiate from nops)
   __asm__ volatile ("nop");
   __asm__ volatile ("nop");
   __asm__ volatile ("nop");

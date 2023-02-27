@@ -559,6 +559,7 @@ package pulp_tap_pkg;
    endclass
 
    task automatic load_L2(
+      // BACCTODO for non fast preload modes 40bit extension is not implemented
       input int          num_stim,
       ref   logic [95:0] stimuli [100000:0],
       ref logic s_tck,
