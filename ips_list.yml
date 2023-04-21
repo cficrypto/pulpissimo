@@ -19,13 +19,9 @@
 #
 
 pulp_soc:
-#  commit: master_v6.0
-#  server: https://github.com
-#  group:  stefanct
   server: git@gitlab.ecs.tuwien.ac.at
-# group:  alwieser
   group:  riscv_cfi_crypto
-  commit: d087d65f7ede82826d927938b69123e7aafa283d
+  commit: a34351e58905026f0e1df6868433143e0193e8d1
   access_token: glpat-spzQ4xLxTAutiELem5CR
 
 tbtools:
