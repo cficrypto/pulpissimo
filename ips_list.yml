@@ -21,7 +21,7 @@
 pulp_soc:
   server: git@gitlab.ecs.tuwien.ac.at
   group:  riscv_cfi_crypto
-  commit: a34351e58905026f0e1df6868433143e0193e8d1
+  commit: 39e8f8158ee77d467e9a384a992d1b644d45ee67
   access_token: glpat-spzQ4xLxTAutiELem5CR
 
 tbtools:
