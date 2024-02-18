@@ -8,7 +8,6 @@
 
 #define VERBOSE 0
 
-
 // Create a new server, listening for connections from localhost on the given
 // port.
 int rbs_init(uint16_t port);

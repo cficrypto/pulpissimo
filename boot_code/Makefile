@@ -15,10 +15,13 @@
 # SPDX-License-Identifier: Apache-2.0
 # Author: Robert Balas (balasr@iis.ee.ethz.ch)
 
-CC      = riscv32-unknown-elf-gcc
+ifeq (,$(RISCV32_TRIPLE))
+  RISCV32_TRIPLE := riscv32-unknown-elf
+endif
+CC      = $(RISCV32_TRIPLE)-gcc
 OBJCOPY = objcopy
 
-CFLAGS   = -Os -g -fno-jump-tables -march=rv32imfxpulpv2 # BACCTODO rv32imfcxpulpv2
+CFLAGS   = -Os -g -fno-jump-tables -march=rv32im
 CPPFLAGS = -I$(CURDIR)/include
 ASFLAGS  = $(CFLAGS) -DLANGUAGE_ASSEMBLY
 LDFLAGS  = -Tlink.ld -nostdlib
