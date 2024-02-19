@@ -21,7 +21,7 @@
 pulp_soc:
   server: https://github.com
   group:  cficrypto
-  commit: 986274454a4e7da21e3bf4e64173cd180182c64e
+  commit: 350e4a86eafc1dac7c0e5b45c967435deb901644 
 
 tbtools:
   commit: v0.1
