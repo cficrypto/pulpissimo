@@ -42,6 +42,6 @@ if os.path.exists("ipstools") and os.path.isdir("ipstools"):
     os.chdir(cwd)
     import ipstools
 else:
-    execute("git clone git@gitlab.ecs.tuwien.ac.at:riscv_cfi_crypto/IPApproX.git ipstools -b less_dumb")
+    execute("git clone git@github.com:cficrypto/IPApproX.git ipstools -b less_dumb")
     import ipstools
 
