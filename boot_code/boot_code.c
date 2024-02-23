@@ -401,36 +401,8 @@ static void __attribute__((noreturn)) bootFromOther(int platform)
   while(1);
 }
 
-void write_tag(){
-  #include "write_tag.h"
-}
-
 void __attribute__((noreturn)) main()
 {
-  // __asm__ volatile ("addi x6,x0,0xff");
-  // __asm__ volatile ("csrrw x0, 0x7d0, x6");
-  
-  // asm volatile ("csrw 0x7d0, 0x0F");  
-  
-  // __asm__ volatile ("addi x6,x0,0xab");
-  // asm volatile ("csrw %0, x6"  :: "i" (0x7d0));
-
-
-  write_tag();
-
-  asm volatile ("csrw %0, %1"  :: "i" (CFI_CFG_BASE), "i" (CFI_CFG_ON | CFI_CFG_LOAD_STATE_BUSY));
-  asm volatile ("csrw %0, %1"  :: "i" (CFI_CFG_BASE), "i" (CFI_CFG_ON));
-  __asm__ volatile ("nop");
-  // asm volatile ("csrw %0, %1"  :: "i" (CFI_CFG_BASE), "i" (CFI_CFG_ON));
-  // __asm__ volatile ("nop");
-  // __asm__ volatile ("nop");
-  asm volatile(".word 0xff000013"); // for replacement only
-
-  // asm volatile ("csrw %0, %1"  :: "i" (CFI_CFG_BASE), "i" (CFI_CFG_OFF));
-  asm volatile(".word 0x01000013"); // first unencrypted instruction (to differentiate from nops)
-  __asm__ volatile ("nop");
-  __asm__ volatile ("nop");
-  __asm__ volatile ("nop");
 
   bootFromOther(APB_SOC_PLT_OTHER);
 
